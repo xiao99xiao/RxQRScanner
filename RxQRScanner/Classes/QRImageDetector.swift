@@ -58,6 +58,9 @@ class QRImageDetector: NSObject, UIImagePickerControllerDelegate, UINavigationCo
 
 extension UIImage {
     func detectQR() -> QRImageDetectResult {
+        #if targetEnvironment(macCatalyst)
+        return .internalError("Cannot init CIContext")
+        #else
         guard let eaglContext = EAGLContext(api: EAGLRenderingAPI.openGLES2) else {
             return .internalError("Cannot init CIContext")
         }
@@ -73,5 +76,6 @@ extension UIImage {
             return .fail
         }
         return .success(str)
+        #endif
     }
 }
